@@ -21,7 +21,9 @@ app.use(cors({ origin: true, credentials: true }));
 // Block some IPs
 app.use(ipBlackList(process.env.IP_BLACK_LIST || ""));
 
-app.use(express.static(Path.join(__dirname, "../build/")));
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(Path.join(__dirname, "../build/")));
+}
 
 app.get("/smart-style.json", (_, res) => {
   res.json({
@@ -106,9 +108,10 @@ app.use("/env.js", (_, res) => {
     .send(`var ENV = ${JSON.stringify(out, null, 4)};`);
 });
 
-// React app - redirect all to ./build/index.html
-app.get("*", (_, res) => res.sendFile("index.html", { root: "./build" }));
-
+if (process.env.NODE_ENV === "production") {
+  // React app - redirect all to ./build/index.html
+  app.get("*", (_, res) => res.sendFile("index.html", { root: "./build" }));
+}
 // Catch all errors
 app.use(globalErrorHandler);
 

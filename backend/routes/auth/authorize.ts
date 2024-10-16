@@ -117,10 +117,7 @@ export default class AuthorizeHandler {
     // In development the frontend is served by Webpack Dev Server and
     // is available on different port than the backend endpoints. In
     // production backend and frontend share the same origin.
-    const origin =
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:8444" // TODO: make this dynamic
-        : this.baseUrl;
+    const origin = this.baseUrl;
 
     const url = new URL(to, origin /*+ req.originalUrl*/);
 
@@ -487,6 +484,10 @@ export default class AuthorizeHandler {
       /^:\/\/localhost/,
       "://127.0.0.1",
     );
+
+    if (process.env.NODE_ENV !== "production") {
+      audUrl.port = apiUrl.port;
+    }
 
     if (apiUrl.href !== audUrl.href) {
       throw new InvalidRequestError(

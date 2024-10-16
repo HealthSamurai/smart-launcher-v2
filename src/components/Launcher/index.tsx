@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { SMART } from "../../../";
 import { encode } from "../../isomorphic/codec";
-import pkg from "../../../package.json";
 import UserPicker from "../UserPicker";
 import PatientInput from "../PatientInput";
 import { copyElement } from "../../lib";
@@ -123,8 +122,7 @@ export default function Launcher() {
 
   const { origin } = window.location;
 
-  const backendOrigin =
-    process.env.NODE_ENV === "development" ? pkg.proxy : origin;
+  const backendOrigin = origin;
 
   // FHIR baseUrl for standalone launches
   const aud = `${backendOrigin}/v/${fhir_version}/sim/${launchCode}/fhir`;
@@ -380,8 +378,7 @@ function LaunchTab() {
   // In development the frontend is served by Webpack Dev Server and
   // is available on different port than the backend endpoints. In
   // production backend and frontend share the same origin.
-  const origin =
-    process.env.NODE_ENV === "development" ? pkg.proxy : window.location.origin;
+  const origin = window.location.origin;
 
   const fhirServerBaseUrl = `${origin}/v/${query.fhir_version}/fhir/`;
 
