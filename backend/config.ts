@@ -34,6 +34,21 @@ export default {
   fhirServerR4: env.FHIR_SERVER_R4 ?? "https://r4.smarthealthit.org",
 
   /**
+   * The key for Basic Authorization of the R2 FHIR server (if any)
+   */
+  fhirServerR2BasicAuth: env.FHIR_SERVER_R2_BASIC_AUTH,
+
+  /**
+   * The key for Basic Authorization of the R3 FHIR server (if any)
+   */
+  fhirServerR3BasicAuth: env.FHIR_SERVER_R3_BASIC_AUTH,
+
+  /**
+   * The key for Basic Authorization of the R4 FHIR server (if any)
+   */
+  fhirServerR4BasicAuth: env.FHIR_SERVER_R4_BASIC_AUTH,
+
+  /**
    * Default access token lifetime in minutes
    */
   accessTokenLifetime: env.ACCESS_TOKEN_LIFETIME || 60,

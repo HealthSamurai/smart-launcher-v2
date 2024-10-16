@@ -23,7 +23,9 @@ export default function introspect(req: Request, res: Response) {
     // @ts-ignore
     return res
       .status(401)
-      .send(`${e.name || "Error"}: ${e.message || "Invalid token"}`);
+      .send(
+        `${(e as Error).name || "Error"}: ${(e as Error).message || "Invalid token"}`,
+      );
   }
 
   // Verify that a token is submitted

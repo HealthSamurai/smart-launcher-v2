@@ -8,6 +8,7 @@ import ScopeSet from "../../../src/isomorphic/ScopeSet";
 import config from "../../config";
 import {
   getFhirServerBaseUrl,
+  getFhirServerBasicAuth,
   getRequestBaseURL,
   humanizeArray,
   requireUrlencodedPost,
@@ -664,7 +665,14 @@ export default class AuthorizeHandler {
     const fhirServer = getFhirServerBaseUrl(this.request as any);
     const url = new URL(`/Encounter/?_count=1&_sort:desc=date`, fhirServer);
     url.searchParams.set("patient", this.launchOptions.patient.get(0)!);
-    const res = await fetch(url);
+    const options: RequestInit = {};
+    const authKey = getFhirServerBasicAuth(this.request as any);
+    if (authKey) {
+      options.headers = {
+        Authorization: `Basic ${authKey}`,
+      };
+    }
+    const res = await fetch(url, options);
     const txt = await res.text();
     if (!res.ok) {
       let msg = txt;

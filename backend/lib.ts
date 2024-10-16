@@ -82,6 +82,24 @@ export function getFhirServerBaseUrl(req: Request) {
   return fhirServer;
 }
 
+export function getFhirServerBasicAuth(req: Request) {
+  try {
+    if (req.params.sim) {
+      var sim = decode(req.params.sim);
+      if (sim.fhir_server) {
+        return sim.fhir_server;
+      }
+    }
+  } catch (ex) {
+    console.error("Invalid sim: " + ex);
+  }
+
+  const fhirVersion = req.params.fhir_release.toUpperCase();
+  return config[
+    `fhirServer${fhirVersion}BasicAuth` as keyof typeof config
+  ] as string;
+}
+
 export function validateToken(req: Request, required = false) {
   if (!req.headers.authorization) {
     if (required) {

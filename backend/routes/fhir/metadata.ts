@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { fetch } from "cross-fetch";
-import { getFhirServerBaseUrl, getRequestBaseURL } from "../../lib";
+import {
+  getFhirServerBaseUrl,
+  getFhirServerBasicAuth,
+  getRequestBaseURL,
+} from "../../lib";
 
 /**
  * The `/metadata` endpoint is an exception in the proxy behavior. For every
@@ -11,13 +15,21 @@ import { getFhirServerBaseUrl, getRequestBaseURL } from "../../lib";
  * @param req
  * @param res
  * @param fhirServer The base URL of the upstream FHIR server
+ * @param authKey The Basic Auth key to use for the upstream FHIR server
  */
 async function getCapabilityStatement(
   req: Request,
   res: Response,
   fhirServer: string,
+  authKey: string,
 ) {
-  const response = await fetch(fhirServer + req.url);
+  const options: RequestInit = {};
+  if (authKey) {
+    options.headers = {
+      Authorization: `Basic ${authKey}`,
+    };
+  }
+  const response = await fetch(fhirServer + req.url, options);
 
   const baseUrl = getRequestBaseURL(req) + req.baseUrl.replace("/fhir", "");
 
@@ -94,5 +106,6 @@ function augmentConformance(json: fhir4.CapabilityStatement, baseUrl: string) {
 
 export default function proxyRequest(req: Request, res: Response) {
   const fhirServer = getFhirServerBaseUrl(req);
-  return getCapabilityStatement(req, res, fhirServer);
+  const authKey = getFhirServerBasicAuth(req);
+  return getCapabilityStatement(req, res, fhirServer, authKey);
 }

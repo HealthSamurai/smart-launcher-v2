@@ -4,6 +4,7 @@ import {
   getRequestBaseURL,
   getFhirServerBaseUrl,
   validateToken,
+  getFhirServerBasicAuth,
 } from "../../lib";
 
 export default async function proxy(req: Request, res: Response) {
@@ -11,6 +12,7 @@ export default async function proxy(req: Request, res: Response) {
   const fhirVersion = req.params.fhir_release.toUpperCase();
   const fhirVersionLower = fhirVersion.toLowerCase();
   const fhirServer = getFhirServerBaseUrl(req);
+  const authKey = getFhirServerBasicAuth(req);
 
   // Anything other than /metadata requires authentication
   validateToken(req, false);
@@ -48,6 +50,10 @@ export default async function proxy(req: Request, res: Response) {
       "accept",
       fhirVersion === "R2" ? "application/json+fhir" : "application/fhir+json",
     );
+  }
+
+  if (authKey) {
+    fhirRequestOptions.headers.set("Authorization", `Basic ${authKey}`);
   }
 
   // Proxy ---------------------------------------------------------------
