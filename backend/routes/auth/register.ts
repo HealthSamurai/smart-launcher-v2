@@ -1,13 +1,11 @@
-import { notSupported } from "../../lib"
+import { notSupported } from "../../lib";
 
-
-export default notSupported()
+export default notSupported();
 
 // import { Request, Response } from "express"
 // import jwt                   from "jsonwebtoken"
 // import config                from "../../../config"
 // import { OAuthError }        from "../../../errors"
-
 
 // interface ClientToken {
 //     iss: string
@@ -16,14 +14,13 @@ export default notSupported()
 //     auth_error?: string
 // }
 
-
 // /**
 //  * Dynamic registration endpoint for Backend Services. The UI will make a POST
 //  * request giving the `iss`, `pub_key`, `dur` and `auth_error` and will get back
 //  * a client_id which will be a jwt
 //  */
 // export default function handleRegistration(req: Request, res: Response) {
-        
+
 //     // Require "application/x-www-form-urlencoded" POSTs
 //     if (!req.is("application/x-www-form-urlencoded")) {
 //         throw new OAuthError(
@@ -38,7 +35,7 @@ export default notSupported()
 //     if (!iss) {
 //         throw new OAuthError("Missing iss parameter").errorId("invalid_request").status(400)
 //     }
-    
+
 //     // parse and validate the "pub_key" parameter
 //     let publicKey = String(req.body.pub_key || "").trim()
 //     if (!publicKey) {

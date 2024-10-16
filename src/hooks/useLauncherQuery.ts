@@ -1,74 +1,80 @@
-import { SMART }           from "../../"
-import { useSearchParams } from "react-router-dom"
-import { decode, encode }  from "../isomorphic/codec"
+import { SMART } from "../../";
+import { useSearchParams } from "react-router-dom";
+import { decode, encode } from "../isomorphic/codec";
 
-
-interface LauncherState extends Omit<Partial<LauncherQuery>, "launch">, SMART.LaunchParams {}
+interface LauncherState
+  extends Omit<Partial<LauncherQuery>, "launch">,
+    SMART.LaunchParams {}
 
 export interface LauncherQuery {
-    launch_url  : string
-    fhir_version: string
-    tab         : string
-    launch      : string
-    jwks_tab    : string
-    validation ?: string
+  launch_url: string;
+  fhir_version: string;
+  tab: string;
+  launch: string;
+  jwks_tab: string;
+  validation?: string;
 }
 
 const LauncherQueryDefaults: LauncherQuery = {
-    fhir_version: "r4",
-    launch_url  : "",
-    tab         : "0",
-    launch      : encode({ launch_type: "provider-ehr", client_type: "public", pkce: "auto" }),
-    jwks_tab    : "0",
-    validation  : "0"
-}
+  fhir_version: "r4",
+  launch_url: "",
+  tab: "0",
+  launch: encode({
+    launch_type: "provider-ehr",
+    client_type: "public",
+    pkce: "auto",
+  }),
+  jwks_tab: "0",
+  validation: "0",
+};
 
 /**
  * Uses the query string to store the state of the launcher page
  */
-export default function useLauncherQuery(initialState: Partial<LauncherQuery> = {})
-{
-    let [searchParams, setSearchParams] = useSearchParams();
+export default function useLauncherQuery(
+  initialState: Partial<LauncherQuery> = {},
+) {
+  let [searchParams, setSearchParams] = useSearchParams();
 
-    const query: LauncherQuery = {
-        ...LauncherQueryDefaults,
-        ...initialState
-    };
+  const query: LauncherQuery = {
+    ...LauncherQueryDefaults,
+    ...initialState,
+  };
 
-    searchParams.forEach((value, key) => {
-        query[key as keyof LauncherQuery] = value
-    });
+  searchParams.forEach((value, key) => {
+    query[key as keyof LauncherQuery] = value;
+  });
 
-    const launch: SMART.LaunchParams = decode(query.launch);
+  const launch: SMART.LaunchParams = decode(query.launch);
 
-    // Properties that belong to the launch parameters are encoded into a
-    // `launch` parameter. Everything else is store as normal query parameter.
-    // `undefined` can be used to remove launch or query parameters.
-    function setQuery(props: Partial<LauncherState>) {
-        for (const name in props) {
-            const value = props[name as keyof LauncherState]
-            
-            if (name in launch) {
-                if (value === undefined) {
-                    delete launch[name as keyof SMART.LaunchParams]
-                } else {
-                    (launch[name as keyof SMART.LaunchParams] as any) = value
-                }
-            }
+  // Properties that belong to the launch parameters are encoded into a
+  // `launch` parameter. Everything else is store as normal query parameter.
+  // `undefined` can be used to remove launch or query parameters.
+  function setQuery(props: Partial<LauncherState>) {
+    for (const name in props) {
+      const value = props[name as keyof LauncherState];
 
-            // everything else is store as normal query parameter
-            else {
-                if (value === undefined) {
-                    searchParams.delete(name)
-                } else {
-                    searchParams.set(name, value + "");
-                }
-            }
+      if (name in launch) {
+        if (value === undefined) {
+          delete launch[name as keyof SMART.LaunchParams];
+        } else {
+          (launch[name as keyof SMART.LaunchParams] as any) = value;
         }
-        
-        searchParams.set("launch", encode(launch))
-        setSearchParams(searchParams)
+      }
+
+      // everything else is store as normal query parameter
+      else {
+        if (value === undefined) {
+          searchParams.delete(name);
+        } else {
+          searchParams.set(name, value + "");
+        }
+      }
     }
 
-    return { query, launch, setQuery }
+    searchParams.set("launch", encode(launch));
+    setSearchParams(searchParams);
+  }
+
+  return { query, launch, setQuery };
 }

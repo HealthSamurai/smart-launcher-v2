@@ -1,12 +1,12 @@
 .encounter-picker {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .encounter-picker tr {
-    cursor: pointer;
+  cursor: pointer;
 }
 .encounter-picker tbody tr:hover {
-    background: #EEE;
+  background: #eee;
 }

@@ -1,4 +1,3 @@
-import { notSupported } from "../../lib"
+import { notSupported } from "../../lib";
 
-
-export default notSupported()
+export default notSupported();
