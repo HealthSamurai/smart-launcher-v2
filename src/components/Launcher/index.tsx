@@ -590,13 +590,14 @@ function LaunchTab() {
               Patient(s)
             </label>
             <PatientInput
+              fhirServerBaseUrl={fhirServerBaseUrl}
               onChange={(list) => setQuery({ patient: list })}
               value={launch.patient}
-              fhirVersion={query.fhir_version as any}
               inputProps={{
                 name: "patient",
                 id: "patient",
                 placeholder: "Patient ID(s)",
+                autoComplete: "off",
               }}
             />
             <span className="help-block small">
