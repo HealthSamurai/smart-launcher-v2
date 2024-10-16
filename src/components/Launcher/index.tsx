@@ -114,6 +114,7 @@ export default function Launcher() {
     jwks: launch.jwks,
     client_type: launch.client_type,
     pkce: launch.pkce,
+    fhir_context_str: launch.fhir_context_str,
   });
 
   const isStandaloneLaunch = launch_type.includes("standalone");
@@ -654,6 +655,24 @@ function LaunchTab() {
             </select>
             <span className="help-block small">
               How to select the current Encounter
+            </span>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="fhirContext" className="text-primary">
+              <code>fhirContext</code>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="fhirContext"
+              name="fhirContext"
+              value={launch.fhir_context_str}
+              onChange={(e) => setQuery({ fhir_context_str: e.target.value })}
+            />
+            <span className="help-block small">
+              Additional references to FHIR resources to include along with the
+              access token
             </span>
           </div>
         </div>

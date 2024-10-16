@@ -5,6 +5,7 @@ import SyntaxHighlighter from "react-syntax-highlighter";
 import { xcode } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import {
   renderCodeList,
+  renderJSON,
   renderNumber,
   renderString,
   renderUrl,
@@ -54,6 +55,11 @@ const KNOWN_PROPS = {
     type: "number",
     render: renderNumber,
     desc: <>The lifetime of the access token in seconds.</>,
+  },
+  fhirContext: {
+    type: "json",
+    render: renderJSON,
+    desc: <>Additional references to FHIR resources.</>,
   },
   scope: {
     type: "string",

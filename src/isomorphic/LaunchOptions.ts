@@ -65,6 +65,8 @@ export default class LaunchOptions {
 
   fhir_server?: string;
 
+  fhir_context_str: string | undefined;
+
   constructor(input: string | SMART.LaunchParams) {
     if (typeof input === "string") {
       input = codec.decode(input);
@@ -85,6 +87,7 @@ export default class LaunchOptions {
     this.client_type = input.client_type || "public";
     this.pkce = input.pkce || "auto";
     this.fhir_server = input.fhir_server || "";
+    this.fhir_context_str = input.fhir_context_str;
     this.provider.set(input.provider || "");
     this.patient.set(input.patient || "");
   }

@@ -67,6 +67,7 @@ export function encode(
         clientTypes.indexOf(params.client_type || "public"),
         PKCEValidationTypes.indexOf(params.pkce || "auto"),
         params.fhir_server || "",
+        params.fhir_context_str || "",
       ]),
     );
   }
@@ -89,6 +90,7 @@ export function encode(
     clientTypes.indexOf(params.client_type || "public"),
     PKCEValidationTypes.indexOf(params.pkce || "auto"),
     params.fhir_server || "",
+    params.fhir_context_str || "",
   ];
 
   return base64UrlEncode(JSON.stringify(arr));
@@ -130,6 +132,7 @@ export function decode(launch: string): SMART.LaunchParams {
     client_type: clientTypes[arr[14]],
     pkce: PKCEValidationTypes[arr[15]],
     fhir_server: arr[16] || "",
+    fhir_context_str: arr[17] || undefined,
   };
 }
 

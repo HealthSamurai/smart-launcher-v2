@@ -127,3 +127,11 @@ export function humanizeArray(arr: string[], quote = false) {
   const last = arr.pop();
   return arr.join(", ") + " and " + last;
 }
+
+export function safeParseJSON(s: string | undefined) {
+  if (s) {
+    try {
+      return JSON.parse(s);
+    } catch (ex) {}
+  }
+}

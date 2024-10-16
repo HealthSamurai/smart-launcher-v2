@@ -2,6 +2,8 @@ import { SMART } from "../";
 import moment from "moment";
 import { encode } from "./isomorphic/codec";
 import Clip from "./components/Clip";
+import { xcode } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import SyntaxHighlighter from "react-syntax-highlighter";
 
 const RE_YEAR = /\d{4}$/;
 const RE_MONTH_YEAR = /\d{4}-d{2}$/;
@@ -158,6 +160,14 @@ export function renderString(x: any, clip?: true | number) {
 
 export function renderNumber(x: any) {
   return <span className="text-danger">{x + ""}</span>;
+}
+
+export function renderJSON(x: any) {
+  return (
+    <SyntaxHighlighter language="json" style={xcode}>
+      {JSON.stringify(x || null, null, 4)}
+    </SyntaxHighlighter>
+  );
 }
 
 export function renderCodeList(x: string | string[]) {

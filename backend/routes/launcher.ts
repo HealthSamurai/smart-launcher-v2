@@ -12,6 +12,7 @@ export default (req: Request, res: Response) => {
     provider,
     sim_ehr,
     select_encounter,
+    fhir_context_str,
   } = req.query;
 
   // launch_uri --------------------------------------------------------------
@@ -53,6 +54,7 @@ export default (req: Request, res: Response) => {
     encounter: bool(select_encounter) ? "MANUAL" : "AUTO",
     pkce: "auto",
     client_type: "public",
+    fhir_context_str: fhir_context_str ? String(fhir_context_str) : undefined,
   });
 
   url.searchParams.set("launch", launchOptions.toString());

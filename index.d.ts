@@ -76,6 +76,7 @@ declare namespace SMART {
     pkce?: PKCEValidation;
     client_type?: SMARTClientType;
     fhir_server?: string;
+    fhir_context_str?: string;
   }
 
   interface AuthorizeParams {
@@ -335,7 +336,7 @@ declare namespace SMART {
      * “Patient” or “Encounter”. It is not prohibited to have more than one
      * Reference to a given type of resource.
      */
-    fhirContext?: string[];
+    fhirContext?: Record<string, string>[];
 
     /**
      * Simulated error to throw

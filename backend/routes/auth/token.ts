@@ -7,7 +7,11 @@ import { SMART } from "../../..";
 import config from "../../config";
 import ScopeSet from "../../../src/isomorphic/ScopeSet";
 import { decode } from "../../../src/isomorphic/codec";
-import { getRequestBaseURL, requireUrlencodedPost } from "../../lib";
+import {
+  getRequestBaseURL,
+  requireUrlencodedPost,
+  safeParseJSON,
+} from "../../lib";
 import {
   InvalidClientError,
   InvalidRequestError,
@@ -151,6 +155,7 @@ export default class TokenHandler {
       token_type: "Bearer",
       expires_in: client.accessTokensExpireIn,
       scope: grantedScopes.join(" "),
+      fhirContext: safeParseJSON(launchOptions.fhir_context_str),
     };
 
     const accessToken = {

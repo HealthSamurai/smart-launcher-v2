@@ -11,6 +11,7 @@ import {
   getRequestBaseURL,
   humanizeArray,
   requireUrlencodedPost,
+  safeParseJSON,
 } from "../../lib";
 import {
   InvalidClientError,
@@ -347,6 +348,7 @@ export default class AuthorizeHandler {
       context: {
         need_patient_banner: !launchOptions.sim_ehr,
         smart_style_url: this.baseUrl + "/smart-style.json",
+        fhirContext: safeParseJSON(launchOptions.fhir_context_str),
       },
       client_id: params.client_id,
       redirect_uri: params.redirect_uri + "",
