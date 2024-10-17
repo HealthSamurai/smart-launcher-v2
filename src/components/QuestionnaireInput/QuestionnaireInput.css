@@ -1,0 +1,53 @@
+.questionnaire-input .dropdown-menu {
+  min-width: 100%;
+  max-height: 40vh;
+  overflow: auto;
+}
+
+.questionnaire-input .input-option {
+  white-space: normal;
+}
+
+.questionnaire-input .input-option > label {
+  display: block;
+  white-space: normal !important;
+  max-width: 100%;
+  cursor: pointer;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: 400;
+  line-height: 1.42857143;
+  color: #333;
+  white-space: nowrap;
+}
+
+.questionnaire-input .input-option > label:hover {
+  background: #eee;
+}
+
+.questionnaire-input .input-option-left {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: auto;
+  text-overflow: ellipsis;
+  vertical-align: top;
+  width: 100%;
+  max-width: 20rem;
+}
+
+.questionnaire-input .input-option-right {
+  padding-left: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: right;
+  min-width: 10rem;
+  font-size: 90%;
+}
+
+.questionnaire-input .dropdown-menu {
+  display: none;
+}
+.questionnaire-input:focus .dropdown-menu,
+.questionnaire-input:focus-within .dropdown-menu {
+  display: block;
+}

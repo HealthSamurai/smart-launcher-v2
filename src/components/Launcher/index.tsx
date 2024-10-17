@@ -6,6 +6,8 @@ import UserPicker from "../UserPicker";
 import PatientInput from "../PatientInput";
 import { copyElement } from "../../lib";
 import useLauncherQuery, { LauncherQuery } from "../../hooks/useLauncherQuery";
+import QuestionnaireInput from "../QuestionnaireInput";
+import QuestionnaireResponseInput from "../QuestionnaireResponseInput";
 
 const launchTypes = [
   {
@@ -373,8 +375,90 @@ export default function Launcher() {
   );
 }
 
+function stringifyFhirContext(fhirContext: SMART.LaunchContext["fhirContext"]) {
+  if (fhirContext && fhirContext.length > 0) {
+    const [first, ...rest] = fhirContext;
+    return `[${first ? JSON.stringify(first) : ""}${
+      rest ? rest.map((r) => ",\n " + JSON.stringify(r)).join("") : ""
+    }]`;
+  }
+  return "";
+}
+
 function LaunchTab() {
   const { query, launch, setQuery } = useLauncherQuery();
+
+  const [questionnaires, _setQuestionnaires] = useState("");
+  const [questionnaireResponses, _setQuestionnaireResponses] = useState("");
+
+  let fhirContext: SMART.LaunchContext["fhirContext"];
+
+  try {
+    fhirContext = JSON.parse(launch.fhir_context_str || "");
+  } catch {
+    fhirContext = undefined;
+  }
+
+  useEffect(() => {
+    if (fhirContext) {
+      _setQuestionnaires(
+        fhirContext
+          .map(
+            (r) =>
+              r.reference?.startsWith("Questionnaire/") &&
+              r.reference?.split("/")[1],
+          )
+          .filter((id) => id)
+          .join(","),
+      );
+      _setQuestionnaireResponses(
+        fhirContext
+          .map(
+            (r) =>
+              r.reference?.startsWith("QuestionnaireResponse/") &&
+              r.reference?.split("/")[1],
+          )
+          .filter((id) => id)
+          .join(","),
+      );
+    }
+  }, [launch.fhir_context_str, fhirContext]);
+
+  const setQuestionnaires = (q: string) => {
+    _setQuestionnaires(q);
+    setQuery({
+      fhir_context_str: stringifyFhirContext(
+        (fhirContext || [])
+          .filter((r) => !r.reference?.startsWith("Questionnaire/"))
+          .concat(
+            q
+              .split(",")
+              .filter((id) => id)
+              .map((id) => ({
+                reference: `Questionnaire/${id}`,
+              })),
+          ),
+      ),
+    });
+  };
+
+  const setQuestionnaireResponses = (qr: string) => {
+    _setQuestionnaireResponses(qr);
+    setQuery({
+      fhir_context_str: stringifyFhirContext(
+        (fhirContext || [])
+          .filter((r) => !r.reference?.startsWith("QuestionnaireResponse/"))
+          .concat(
+            qr
+              .split(",")
+              .filter((id) => id)
+              .map((id) => ({
+                reference: `QuestionnaireResponse/${id}`,
+              })),
+          ),
+      ),
+    });
+  };
 
   // In development the frontend is served by Webpack Dev Server and
   // is available on different port than the backend endpoints. In
@@ -659,24 +743,68 @@ function LaunchTab() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="fhirContext" className="text-primary">
-              <code>fhirContext</code>
+            <label htmlFor="questionnaire" className="text-primary">
+              Questionnaire(s)
             </label>
-            <input
-              type="text"
-              className="form-control"
-              id="fhirContext"
-              name="fhirContext"
-              value={launch.fhir_context_str}
-              onChange={(e) => setQuery({ fhir_context_str: e.target.value })}
+            <QuestionnaireInput
+              fhirServerBaseUrl={fhirServerBaseUrl}
+              onChange={(questionnaires) => setQuestionnaires(questionnaires)}
+              value={questionnaires}
+              inputProps={{
+                name: "questionnaire",
+                id: "questionnaire",
+                placeholder: "Questionnaire ID(s)",
+                autoComplete: "off",
+              }}
             />
             <span className="help-block small">
-              Additional references to FHIR resources to include along with the
-              access token
+              Simulates the active questionnaire in EHR when app is launched
+            </span>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="questionnaireResponse" className="text-primary">
+              QuestionnaireResponse(s)
+            </label>
+            <QuestionnaireResponseInput
+              fhirServerBaseUrl={fhirServerBaseUrl}
+              onChange={(questionnaireResponses) =>
+                setQuestionnaireResponses(questionnaireResponses)
+              }
+              value={questionnaireResponses}
+              inputProps={{
+                name: "questionnaireResponse",
+                id: "questionnaireResponse",
+                placeholder: "QuestionnaireResponse ID(s)",
+                autoComplete: "off",
+              }}
+            />
+            <span className="help-block small">
+              Simulates the active questionnaire in EHR when app is launched
             </span>
           </div>
         </div>
       ) : null}
+      <div className="col-sm-12">
+        <div className="form-group">
+          <label htmlFor="fhirContext" className="text-primary">
+            <code>fhirContext</code>
+          </label>
+          <textarea
+            className="form-control"
+            rows={8}
+            style={{ whiteSpace: "nowrap", fontFamily: "monospace" }}
+            id="fhirContext"
+            name="fhirContext"
+            value={launch.fhir_context_str || ""}
+            onChange={(e) => setQuery({ fhir_context_str: e.target.value })}
+          ></textarea>
+          <span className="help-block small">
+            Additional references to FHIR resources to include along with the
+            access token
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

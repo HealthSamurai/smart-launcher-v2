@@ -1,9 +1,8 @@
 import { InputHTMLAttributes } from "react";
 import useFetch from "../../hooks/useFetch";
-import { humanName } from "../../lib";
-import "./PatientInput.css";
+import "./QuestionnaireInput.css";
 
-interface PatientInputProps {
+interface QuestionnaireInputProps {
   value?: string;
   fhirServerBaseUrl: string;
   onChange: (list: string) => void;
@@ -14,14 +13,14 @@ interface PatientInputProps {
   >;
 }
 
-export default function PatientInput({
+export default function QuestionnaireInput({
   value,
   onChange,
   limit,
   fhirServerBaseUrl,
   inputProps = {},
-}: PatientInputProps) {
-  const url = new URL("./Patient", fhirServerBaseUrl);
+}: QuestionnaireInputProps) {
+  const url = new URL("./Questionnaire", fhirServerBaseUrl);
 
   if (limit) {
     url.searchParams.set("_count", limit + "");
@@ -31,7 +30,7 @@ export default function PatientInput({
     data: bundle,
     error,
     loading,
-  } = useFetch<fhir4.Bundle<fhir4.Patient>>(url.href, {
+  } = useFetch<fhir4.Bundle<fhir4.Questionnaire>>(url.href, {
     headers: {
       authorization: `Bearer ${window.ENV.ACCESS_TOKEN}`,
     },
@@ -39,18 +38,18 @@ export default function PatientInput({
   const records = bundle?.entry?.map((p) => p.resource!) || [];
 
   if (error) {
-    console.error("No patients found. " + error);
+    console.error("No questionnaires found. " + error);
   }
 
   return (
-    <div className="dropdown patient-input open">
+    <div className="dropdown questionnaire-input open">
       <input
         {...inputProps}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="form-control"
       />
-      <PatientInputMenu
+      <QuestionnaireInputMenu
         selection={value}
         records={records}
         onChange={(list) => onChange(list.join(","))}
@@ -60,14 +59,14 @@ export default function PatientInput({
   );
 }
 
-function PatientInputMenu({
+function QuestionnaireInputMenu({
   selection = "",
   records,
   onChange,
   loading,
 }: {
   selection?: string;
-  records: fhir4.Patient[];
+  records: fhir4.Questionnaire[];
   onChange: (list: string[]) => void;
   loading?: boolean;
 }) {
@@ -104,7 +103,7 @@ function PatientInputMenu({
   if (!records.length) {
     return (
       <ul className="dropdown-menu">
-        <li className="text-center text-danger">No Patients Found</li>
+        <li className="text-center text-danger">No Questionnaires Found</li>
       </ul>
     );
   }
@@ -112,9 +111,9 @@ function PatientInputMenu({
   return (
     <ul className="dropdown-menu">
       {records.map((r) => (
-        <PatientInputMenuItem
+        <QuestionnaireInputMenuItem
           key={r.id}
-          patient={r}
+          questionnaire={r}
           selected={ids.includes(r.id!)}
           onChange={createToggleHandler(r.id!)}
         />
@@ -123,12 +122,12 @@ function PatientInputMenu({
   );
 }
 
-function PatientInputMenuItem({
-  patient,
+function QuestionnaireInputMenuItem({
+  questionnaire,
   selected,
   onChange,
 }: {
-  patient: fhir4.Patient;
+  questionnaire: fhir4.Questionnaire;
   selected: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
@@ -140,21 +139,21 @@ function PatientInputMenuItem({
           e.stopPropagation();
         }}
         onMouseDown={(e) => e.preventDefault()}
-        htmlFor={"patient-" + patient.id}
+        htmlFor={"questionnaire-" + questionnaire.id}
       >
         <div className="input-option-left">
           <input
-            id={"patient-" + patient.id}
+            id={"questionnaire-" + questionnaire.id}
             type="checkbox"
-            value={patient.id}
+            value={questionnaire.id}
             checked={selected}
             onChange={onChange}
           />{" "}
-          <b>&nbsp;{humanName(patient)}</b>
+          <b>&nbsp;{questionnaire.title}</b>
         </div>
         <div className="text-muted input-option-right">
           <b>ID: </b>
-          {patient.id}
+          {questionnaire.id}
         </div>
       </label>
     </li>

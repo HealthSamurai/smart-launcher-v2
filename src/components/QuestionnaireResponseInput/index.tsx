@@ -1,9 +1,8 @@
 import { InputHTMLAttributes } from "react";
 import useFetch from "../../hooks/useFetch";
-import { humanName } from "../../lib";
-import "./PatientInput.css";
+import "./QuestionnaireResponseInput.css";
 
-interface PatientInputProps {
+interface QuestionnaireResponseInputProps {
   value?: string;
   fhirServerBaseUrl: string;
   onChange: (list: string) => void;
@@ -14,14 +13,14 @@ interface PatientInputProps {
   >;
 }
 
-export default function PatientInput({
+export default function QuestionnaireResponseInput({
   value,
   onChange,
   limit,
   fhirServerBaseUrl,
   inputProps = {},
-}: PatientInputProps) {
-  const url = new URL("./Patient", fhirServerBaseUrl);
+}: QuestionnaireResponseInputProps) {
+  const url = new URL("./QuestionnaireResponse", fhirServerBaseUrl);
 
   if (limit) {
     url.searchParams.set("_count", limit + "");
@@ -31,7 +30,7 @@ export default function PatientInput({
     data: bundle,
     error,
     loading,
-  } = useFetch<fhir4.Bundle<fhir4.Patient>>(url.href, {
+  } = useFetch<fhir4.Bundle<fhir4.QuestionnaireResponse>>(url.href, {
     headers: {
       authorization: `Bearer ${window.ENV.ACCESS_TOKEN}`,
     },
@@ -39,18 +38,18 @@ export default function PatientInput({
   const records = bundle?.entry?.map((p) => p.resource!) || [];
 
   if (error) {
-    console.error("No patients found. " + error);
+    console.error("No questionnaireResponses found. " + error);
   }
 
   return (
-    <div className="dropdown patient-input open">
+    <div className="dropdown questionnaire-response-input open">
       <input
         {...inputProps}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="form-control"
       />
-      <PatientInputMenu
+      <QuestionnaireResponseInputMenu
         selection={value}
         records={records}
         onChange={(list) => onChange(list.join(","))}
@@ -60,14 +59,14 @@ export default function PatientInput({
   );
 }
 
-function PatientInputMenu({
+function QuestionnaireResponseInputMenu({
   selection = "",
   records,
   onChange,
   loading,
 }: {
   selection?: string;
-  records: fhir4.Patient[];
+  records: fhir4.QuestionnaireResponse[];
   onChange: (list: string[]) => void;
   loading?: boolean;
 }) {
@@ -104,7 +103,7 @@ function PatientInputMenu({
   if (!records.length) {
     return (
       <ul className="dropdown-menu">
-        <li className="text-center text-danger">No Patients Found</li>
+        <li className="text-center text-danger">No QuestionnaireResponses Found</li>
       </ul>
     );
   }
@@ -112,9 +111,9 @@ function PatientInputMenu({
   return (
     <ul className="dropdown-menu">
       {records.map((r) => (
-        <PatientInputMenuItem
+        <QuestionnaireResponseInputMenuItem
           key={r.id}
-          patient={r}
+          questionnaireResponse={r}
           selected={ids.includes(r.id!)}
           onChange={createToggleHandler(r.id!)}
         />
@@ -123,12 +122,12 @@ function PatientInputMenu({
   );
 }
 
-function PatientInputMenuItem({
-  patient,
+function QuestionnaireResponseInputMenuItem({
+  questionnaireResponse,
   selected,
   onChange,
 }: {
-  patient: fhir4.Patient;
+  questionnaireResponse: fhir4.QuestionnaireResponse;
   selected: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
@@ -140,21 +139,21 @@ function PatientInputMenuItem({
           e.stopPropagation();
         }}
         onMouseDown={(e) => e.preventDefault()}
-        htmlFor={"patient-" + patient.id}
+        htmlFor={"questionnaire-response-" + questionnaireResponse.id}
       >
         <div className="input-option-left">
           <input
-            id={"patient-" + patient.id}
+            id={"questionnaire-response-" + questionnaireResponse.id}
             type="checkbox"
-            value={patient.id}
+            value={questionnaireResponse.id}
             checked={selected}
             onChange={onChange}
           />{" "}
-          <b>&nbsp;{humanName(patient)}</b>
+          <b>&nbsp;{questionnaireResponse.id}</b>
         </div>
         <div className="text-muted input-option-right">
           <b>ID: </b>
-          {patient.id}
+          {questionnaireResponse.id}
         </div>
       </label>
     </li>
