@@ -5,6 +5,8 @@ on:
     workflows: ["Backend Tests", "Browser Tests"]
     types:
       - completed
+    branches:
+      - main
 
 jobs:
   run_after_tests:

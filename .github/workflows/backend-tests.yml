@@ -11,17 +11,17 @@ on:
 
 jobs:
   build:
-    
+
     runs-on: ubuntu-20.04
 
     strategy:
       matrix:
-        node-version: [ 16.x, 18.x ]
+        node-version: [ 18 ]
 
     steps:
-      
+
       - uses: actions/checkout@v3
-    
+
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -31,4 +31,3 @@ jobs:
       - run: npm ci --legacy-peer-deps
 
       - run: ./node_modules/.bin/mocha -r dotenv/config --exit -t 5000
-
