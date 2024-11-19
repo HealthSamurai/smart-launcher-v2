@@ -32,6 +32,23 @@ grant_types:
   - basic
 ```
 
+Create policy to allow client to access FHIR resources:
+
+```http request
+POST /AccessPolicy
+Accept: text/yaml
+Content-Type: text/yaml
+
+id: smart-launcher-v2-policy
+engine: allow 
+description: Allow everything for smart-launcher-v2
+link:
+  - resourceType: Client
+    id: smart-launcher-v2
+```
+
+You can define more strict policy to allow only specific resources. For the demo purposes we allow everything.
+
 ### 3. Start SMART Launcher
 
 Run docker container with the following command:
